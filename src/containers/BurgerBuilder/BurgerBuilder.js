@@ -33,17 +33,21 @@ class BurgerBuilder extends Component {
     componentDidMount() {
         axios
             .get('https://burg123.firebaseio.com/ingredients.json')
-            .then((response) => {
+            .then(response => {
                 this.setState({ ingredients: response.data });
             })
-            .catch((err) => {
+            .catch(err => {
                 this.setState({ error: true });
             });
     }
 
-    updatePurchaseState = (ingredients) => {
+    componentDidUpdate() {
+        console.log(this.state.ingredients);
+    }
+
+    updatePurchaseState = ingredients => {
         const sum = Object.keys(ingredients)
-            .map((igKey) => {
+            .map(igKey => {
                 return ingredients[igKey];
             })
             .reduce((sum, el) => {
@@ -70,6 +74,7 @@ class BurgerBuilder extends Component {
                     encodeURIComponent(this.state.ingredients[i])
             );
         }
+        queryParams.push('price=' + this.state.totalPrice);
 
         const queryString = queryParams.join('&');
 
@@ -79,7 +84,7 @@ class BurgerBuilder extends Component {
         });
     };
 
-    addIngredientHandler = (type) => {
+    addIngredientHandler = type => {
         //console.log(this.state);
         const oldCount = this.state.ingredients[type];
         const updatedCount = oldCount + 1;
@@ -97,7 +102,7 @@ class BurgerBuilder extends Component {
         this.updatePurchaseState(updatedIngredients);
     };
 
-    removeIngredientsHandler = (type) => {
+    removeIngredientsHandler = type => {
         const oldCount = this.state.ingredients[type];
 
         if (oldCount <= 0) {
